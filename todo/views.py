@@ -13,7 +13,16 @@ def dashboard(request):
     total_tasks=user_tasks.count()
     today_tasks = user_tasks.filter(due_date=today).order_by('due_date')
     upcoming_tasks = user_tasks.filter(due_date__gt=today).order_by('due_date')
-    
+    if request.method == "POST":
+        title = request.POST.get("title")
+
+        if title:   # ✅ validation
+            Task.objects.create(
+                user=request.user,
+                title=title
+            )
+        else:
+            print("Title is empty")
     
     if request.method=='POST':
         title=request.POST.get('title')
