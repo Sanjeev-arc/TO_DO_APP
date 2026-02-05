@@ -1,0 +1,212 @@
+<script src="https://cdn.tailwindcss.com"></script>
+
+{% if tasks %}
+ 
+<!-- Trash Container -->
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">Recycle Bin</h2>
+        <p class="text-slate-600">Restore deleted tasks or permanently remove them</p>
+        <div class="mt-4 flex items-center text-sm text-slate-500">
+            <svg class="w-5 h-5 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span>{{ tasks|length }} deleted item{{ tasks|pluralize }}</span>
+        </div>
+    </div>
+
+    <!-- Tasks Grid -->
+    <div class="space-y-4">
+        {% for task in tasks %}
+        <div class="group bg-white rounded-xl border border-slate-200 p-6 hover:border-emerald-200 hover:shadow-lg transition-all duration-200 animate-fade-in-up"
+             style="animation-delay: {{ forloop.counter0|add:1 }}00ms">
+            <div class="flex items-start justify-between">
+                <!-- Task Content -->
+                <div class="flex-1">
+                    <div class="flex items-start space-x-3">
+                        <!-- Task Status Indicator -->
+                        <div class="mt-1">
+                            <div class="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-emerald-400 transition-colors duration-200"></div>
+                        </div>
+                        
+                        <!-- Task Details -->
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-slate-800 text-lg group-hover:text-emerald-700 transition-colors duration-200">
+                                {{ task.title }}
+                            </h3>
+                            
+                            {% if task.description %}
+                            <p class="text-slate-600 mt-2 text-sm leading-relaxed line-clamp-2">
+                                {{ task.description }}
+                            </p>
+                            {% endif %}
+                            
+                            <!-- Task Metadata -->
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                {% if task.category %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
+                                    {{ task.category }}
+                                </span>
+                                {% endif %}
+                                
+                                {% if task.due_date %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    {{ task.due_date }}
+                                </span>
+                                {% endif %}
+                                
+                                {% if task.priority %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {% if task.priority == 'high' %}bg-red-50 text-red-700
+                                    {% elif task.priority == 'medium' %}bg-amber-50 text-amber-700
+                                    {% else %}bg-emerald-50 text-emerald-700{% endif %}">
+                                    {% if task.priority == 'high' %}
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.886-.833-2.656 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                    {% elif task.priority == 'medium' %}
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {% else %}
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {% endif %}
+                                    {{ task.priority|title }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center space-x-2 ml-4">
+                    <!-- Restore Button -->
+                    <form method="POST" action="{% url 'restore_task' task.id %}" class="inline-block">
+                        {% csrf_token %}
+                        <button type="submit"
+                                onclick="return confirm('Restore this task?')"
+                                class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0 group/restore">
+                            <svg class="w-4 h-4 mr-2 group-hover/restore:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Restore
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div class="mt-4 pt-4 border-t border-slate-100 group-last:border-transparent">
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Deleted on: {{ task.deleted_at|date:"M d, Y H:i" }}
+                    </div>
+                    <span class="text-amber-600 font-medium animate-pulse">This task will be permanently deleted in 30 days</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% else %}
+<!-- Empty State -->
+<div class="text-center py-16">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 mb-6">
+        <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </div>
+    <h3 class="text-2xl font-bold text-slate-800 mb-2">Recycle Bin is Empty</h3>
+    <p class="text-slate-600 max-w-md mx-auto mb-8">
+        No deleted tasks found. Tasks you delete will appear here before being permanently removed.
+    </p>
+    <a href="{% url 'dashboard' %}"
+       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-emerald-500/25">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Dashboard
+    </a>
+</div>
+{% endif %}
+
+<!-- Styles -->
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in-up {
+        animation: fade-in-up 0.3s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    /* Smooth scrollbar */
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f1f5f9;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #10b981, #0d9488);
+        border-radius: 10px;
+    }
+</style>
+
+<!-- JavaScript for Interactions -->
+<script>
+    
+    // Add hover effect to task cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskCards = document.querySelectorAll('[class*="animate-fade-in-up"]');
+        
+        taskCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Animate task cards in sequence
+        taskCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 100}ms`;
+        });
+    });
+</script>

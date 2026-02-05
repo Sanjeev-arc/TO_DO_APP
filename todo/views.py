@@ -21,7 +21,7 @@ def dashboard(request):
         due_date=request.POST.get('due_date')
         category=request.POST.get('category','General')
         Task.objects.create(user=request.user, title=title, description=description, due_date=due_date, category=category)
-    tasks = Task.objects.filter(user=request.user).all()
+    tasks = Task.objects.filter(user=request.user, is_deleted=False).all()
     context = {
         'tasks': tasks,
         'today_tasks': today_tasks,
@@ -33,8 +33,23 @@ def dashboard(request):
 def Home(request):
     return render(request, 'todo/home.html')
 
+def aboutus(request):
+    return render(request, 'todo/aboutus.html')
+
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
     if request.method=='POST':
-      task.delete()
+      task.is_deleted=True
+      task.save()
       return redirect('dashboard')
+
+def restore_task(request, id):
+    task = get_object_or_404(Task, id=id, user=request.user)
+
+    if request.method == "POST":
+        task.is_deleted = False
+        task.save()
+        return redirect("trash")
+def trash(request):
+    tasks = Task.objects.filter(user=request.user, is_deleted=True)
+    return render(request, "todo/trash.html", {"tasks": tasks})

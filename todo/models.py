@@ -14,6 +14,7 @@ class Task(models.Model):
     title=models.CharField(max_length=100)
     description=models.TextField(blank=True)
     due_date=models.DateField()
+    is_deleted=models.BooleanField(default=False)
     category=models.CharField(max_length=50)
     
     def __str__(self):

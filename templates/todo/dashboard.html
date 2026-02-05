@@ -1,32 +1,108 @@
 {% extends 'todo/base.html' %}
 
-{% block title %}Home - To-Do Master{% endblock %}
+{% block title %}Dashboard - To-Do Master{% endblock %}
 
 {% block child_block %}
-
-<!-- Custom Fonts and Colors -->
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
-
+    
     body {
         font-family: 'Inter', sans-serif;
     }
-
-    h1,
-    h2,
-    h3,
-    h4 {
+    
+    h1, h2, h3, h4 {
         font-family: 'Poppins', sans-serif;
+    }
+    
+    /* Custom animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes blob {
+        0% {
+            transform: translate(0px, 0px) scale(1);
+        }
+        33% {
+            transform: translate(30px, -50px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+        100% {
+            transform: translate(0px, 0px) scale(1);
+        }
+    }
+    
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .animate-blob {
+        animation: blob 7s infinite;
+    }
+    
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+        animation-delay: 4s;
     }
 </style>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50">
+<!-- Navigation -->
+<nav class="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <a href="{% url 'dashboard' %}" class="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+                    To-Do Master
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'account_logout' %}" 
+                   class="text-slate-600 hover:text-emerald-600 font-medium transition-colors">
+                    Sign Out
+                </a>
+                <a href="{%url 'account_change_password'%}" class="text-slate-600 hover:text-emerald-600 font-medium transition-colors">
+                    Change Password
+                </a>
+                <a href="{%url 'account_email'%}" class="text-slate-600 hover:text-emerald-600 font-medium transition-colors">
+                    Manage Emails   
+                </a>
+                <a href="{% url 'trash' %}" 
+                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-sm hover:shadow-md">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Bin
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Background Elements -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+</div>
+
+<main class="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 pt-6">
     <!-- Welcome Header -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div class="text-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div class="text-center animate-fade-in">
             <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-3">
-                Welcome back, <span
-                    class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{user.username}}</span>
+                Welcome back, <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{{user.username}}</span>
                 👋
             </h1>
             <p class="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -38,7 +114,7 @@
     <!-- Stats Dashboard -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {% if total_tasks > 0 %}
-        <div class="mb-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 shadow-xl">
+        <div class="mb-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 shadow-xl transform hover:scale-[1.01] transition-all duration-300">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-white mb-2">Your Progress Dashboard</h2>
@@ -46,19 +122,23 @@
                         tasks in total</p>
                 </div>
                 <div class="hidden md:block">
-                    <span class="text-4xl">📊</span>
+                    <svg class="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
                 </div>
             </div>
         </div>
         {% else %}
-        <div class="mb-8 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-6 shadow-xl">
+        <div class="mb-8 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl p-6 shadow-xl transform hover:scale-[1.01] transition-all duration-300">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-white mb-2">Ready to Get Started?</h2>
                     <p class="text-amber-100">No tasks yet. Add your first task below!</p>
                 </div>
                 <div class="hidden md:block">
-                    <span class="text-4xl">🎯</span>
+                    <svg class="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
             </div>
         </div>
@@ -67,11 +147,12 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <!-- Today's Tasks Card -->
-            <div
-                class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-emerald-500 transform hover:scale-[1.02] transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-emerald-500 transform hover:scale-[1.02] transition-all duration-300 animate-fade-in" style="animation-delay: 0.1s">
                 <div class="flex items-center mb-4">
-                    <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center mr-4">
-                        <span class="text-2xl">📅</span>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-slate-800">Today's Tasks</h3>
@@ -79,9 +160,11 @@
                     </div>
                 </div>
                 <div class="text-center">
-
                     {% for task in today_tasks %}
-                    <h2 class="text-sm text-emerald-500 mt-2">{{ task.title }} 💪</h2>
+                    <div class="flex items-center justify-center text-emerald-600 mt-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>
+                        <span class="text-sm font-medium">{{ task.title }}</span>
+                    </div>
                     {% empty %}
                     <p class="text-sm text-slate-400 mt-2">Clear schedule today</p>
                     {% endfor %}
@@ -89,11 +172,12 @@
             </div>
 
             <!-- Upcoming Tasks Card -->
-            <div
-                class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500 transform hover:scale-[1.02] transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-blue-500 transform hover:scale-[1.02] transition-all duration-300 animate-fade-in" style="animation-delay: 0.2s">
                 <div class="flex items-center mb-4">
-                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
-                        <span class="text-2xl">⏰</span>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-slate-800">Upcoming Tasks</h3>
@@ -101,12 +185,11 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    {% for task in upcoming_tasks%}
-
-
-
-                    <h2 class="text-sm text-blue-500 mt-2">{{task.title}} 🗓️</h2>
-
+                    {% for task in upcoming_tasks %}
+                    <div class="flex items-center justify-center text-blue-600 mt-2">
+                        <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                        <span class="text-sm font-medium">{{ task.title }}</span>
+                    </div>
                     {% empty %}
                     <p class="text-sm text-slate-400 mt-2">No upcoming tasks</p>
                     {% endfor %}
@@ -114,11 +197,12 @@
             </div>
 
             <!-- Completion Rate Card -->
-            <div
-                class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-purple-500 transform hover:scale-[1.02] transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-purple-500 transform hover:scale-[1.02] transition-all duration-300 animate-fade-in" style="animation-delay: 0.3s">
                 <div class="flex items-center mb-4">
-                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4">
-                        <span class="text-2xl">🏆</span>
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-slate-800">Completion Rate</h3>
@@ -129,8 +213,8 @@
                     {% if total_tasks > 0 %}
                     {% widthratio completed_tasks total_tasks 100 as completion_rate %}
                     <div class="text-4xl font-bold text-purple-600">{{ completion_rate }}%</div>
-                    <div class="mt-2 bg-slate-200 rounded-full h-2">
-                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full h-2"></div>
+                    <div class="mt-4 bg-slate-200 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full h-2" style="width: {{ completion_rate }}%"></div>
                     </div>
                     {% else %}
                     <div class="text-4xl font-bold text-slate-400">0%</div>
@@ -143,7 +227,7 @@
 
     <!-- Main To-Do Section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
             <div class="lg:flex">
                 <!-- Left Panel - Add Task Form -->
                 <div class="lg:w-2/5 bg-gradient-to-br from-slate-900 to-slate-800 p-8 lg:p-10">
@@ -156,8 +240,8 @@
                                 Task Title
                             </label>
                             <input type="text" id="task-title" name="title"
-                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                                placeholder="What needs to be done?">
+                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                                placeholder="What needs to be done?" required>
                         </div>
 
                         <div>
@@ -165,7 +249,7 @@
                                 Description
                             </label>
                             <textarea id="task-description" rows="3" name="description"
-                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none"
+                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 resize-none"
                                 placeholder="Add some details..."></textarea>
                         </div>
 
@@ -175,7 +259,7 @@
                                     Category
                                 </label>
                                 <select id="task-category" name="category"
-                                    class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200">
                                     <option class="bg-slate-800" value="personal">Personal</option>
                                     <option class="bg-slate-800" value="work">Work</option>
                                     <option class="bg-slate-800" value="shopping">Shopping</option>
@@ -189,7 +273,7 @@
                                     Priority
                                 </label>
                                 <select id="task-priority" name="priority"
-                                    class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200">
                                     <option class="bg-slate-800" value="low">Low</option>
                                     <option class="bg-slate-800" value="medium" selected>Medium</option>
                                     <option class="bg-slate-800" value="high">High</option>
@@ -202,13 +286,16 @@
                                 Due Date
                             </label>
                             <input type="date" id="task-due" name="due_date"
-                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                                class="w-full px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200">
                         </div>
 
                         <button type="submit"
                             class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-4 px-4 rounded-xl hover:from-emerald-600 hover:to-teal-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-emerald-500/25">
                             <span class="flex items-center justify-center">
-                                <span class="mr-2">+</span> Add Task
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Add Task
                             </span>
                         </button>
                     </form>
@@ -219,13 +306,17 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
                         <h2 class="text-3xl font-bold text-slate-800 mb-4 sm:mb-0">Your Tasks</h2>
                         <div class="flex space-x-3">
-                            <button
-                                class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-all flex items-center">
-                                <span class="mr-2">🔍</span> Filter
+                            <button class="px-4 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-all duration-200 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                                Filter
                             </button>
-                            <button
-                                class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-all flex items-center">
-                                <span class="mr-2">↕️</span> Sort
+                            <button class="px-4 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-all duration-200 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+                                </svg>
+                                Sort
                             </button>
                         </div>
                     </div>
@@ -234,23 +325,28 @@
                     {% if tasks %}
                     <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                         {% for task in tasks %}
-                        <div
-                            class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group">
+                        <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group animate-fade-in" style="animation-delay: {{ forloop.counter0|add:4 }}00ms">
                             <div class="flex items-start">
-                                <div class="flex items-center h-6 mt-1">
-                                    <input type="checkbox"
-                                        class="h-5 w-5 text-emerald-500 rounded-full focus:ring-emerald-400 border-slate-300">
+                                <div class="flex items-center h-6 mt-1 mr-4">
+                                    <form method="POST" action="{% url 'dashboard'%}" class="inline-block">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="w-5 h-5 rounded-full border-2 border-slate-300 hover:border-emerald-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="ml-4 flex-1">
+                                <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                                        <h3
-                                            class="font-semibold text-slate-800 text-lg group-hover:text-emerald-700 transition-colors">
-                                            {{ task.title }}</h3>
+                                        <h3 class="font-semibold text-slate-800 text-lg group-hover:text-emerald-700 transition-colors">
+                                            {{ task.title }}
+                                        </h3>
                                         <div class="flex items-center space-x-3 mt-2 sm:mt-0">
                                             {% if task.due_date %}
-                                            <span
-                                                class="text-sm font-medium bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full flex items-center">
-                                                <span class="mr-1.5">📅</span> {{ task.due_date }}
+                                            <span class="text-sm font-medium bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full flex items-center">
+                                                <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                {{ task.due_date }}
                                             </span>
                                             {% endif %}
                                             <span class="text-sm font-medium px-3 py-1.5 rounded-full 
@@ -266,23 +362,23 @@
                                     {% endif %}
                                     <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
                                         <span class="text-sm text-slate-500 flex items-center">
-                                            <span class="mr-1.5">🏷️</span> {{ task.category|default:"Uncategorized" }}
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                            {{ task.category|default:"Uncategorized" }}
                                         </span>
                                         <div class="flex space-x-2">
-                                            <button
-                                                class="text-slate-400 hover:text-emerald-500 transition-colors p-1.5">
-                                                <span>✏️</span>
-                                            </button>
-
-                                            <form method="POST" action="{% url 'delete_task' task.id %}">
+                                           
+                                            <form method="POST" action="{% url 'delete_task' task.id %}" class="inline-block">
                                                 {% csrf_token %}
-                                                <button type="submit" onclick="return confirm('Delete this task?')"
-                                                    class="text-slate-400 hover:text-red-500 transition-colors p-1.5">
-                                                    <span>🗑️</span>
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this task?')"
+                                                        class="text-slate-400 hover:text-red-500 transition-colors p-1.5">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
                                                 </button>
                                             </form>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -291,10 +387,13 @@
                     </div>
                     {% else %}
                     <div class="text-center py-12">
-                        <div class="text-6xl mb-4">📝</div>
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 mb-6">
+                            <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
                         <h3 class="text-2xl font-bold text-slate-700 mb-3">No tasks yet</h3>
-                        <p class="text-slate-500 max-w-md mx-auto mb-8">Add your first task using the form on the left
-                            to get started!</p>
+                        <p class="text-slate-500 max-w-md mx-auto mb-8">Add your first task using the form on the left to get started!</p>
                     </div>
                     {% endif %}
 
@@ -326,48 +425,44 @@
 
     <!-- Features Section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <h2 class="text-3xl font-bold text-center text-slate-800 mb-3">Why Our To-Do App?</h2>
-        <p class="text-lg text-slate-600 text-center mb-12 max-w-2xl mx-auto">Designed with attention to detail for your
-            productivity journey</p>
+        <h2 class="text-3xl font-bold text-center text-slate-800 mb-3">Why To-Do Master?</h2>
+        <p class="text-lg text-slate-600 text-center mb-12 max-w-2xl mx-auto">Designed with attention to detail for your productivity journey</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div
-                class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-emerald-200">
-                <div
-                    class="w-14 h-14 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center mb-6">
-                    <span class="text-2xl">⚡</span>
+            <div class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-emerald-200">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 mb-3">Lightning Fast</h3>
-                <p class="text-slate-600 leading-relaxed">Optimized performance with instant task updates. No more
-                    waiting for pages to load.</p>
+                <p class="text-slate-600 leading-relaxed">Optimized performance with instant task updates. No more waiting for pages to load.</p>
             </div>
 
-            <div
-                class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-blue-200">
-                <div
-                    class="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-6">
-                    <span class="text-2xl">📱</span>
+            <div class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-blue-200">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 mb-3">Fully Responsive</h3>
-                <p class="text-slate-600 leading-relaxed">Access seamlessly on any device. Your tasks sync perfectly
-                    across all screens.</p>
+                <p class="text-slate-600 leading-relaxed">Access seamlessly on any device. Your tasks sync perfectly across all screens.</p>
             </div>
 
-            <div
-                class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-200 hover:border-purple-200">
-                <div
-                    class="w-14 h-14 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mb-6">
-                    <span class="text-2xl">🔒</span>
+            <div class="bg-gradient-to-br from-white to-slate-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:border-purple-200">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 mb-3">Secure & Private</h3>
-                <p class="text-slate-600 leading-relaxed">Enterprise-grade security. Your data is encrypted and never
-                    shared with third parties.</p>
+                <p class="text-slate-600 leading-relaxed">Enterprise-grade security. Your data is encrypted and never shared with third parties.</p>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<!-- Custom Scrollbar and Effects -->
+<!-- Custom Scrollbar -->
 <style>
     .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
@@ -386,23 +481,38 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(to bottom, #059669, #0f766e);
     }
-
-    /* Smooth animations */
-    .task-card {
-        animation: fadeInUp 0.5s ease-out;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
 </style>
 
+<script>
+    // Add form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const taskTitle = document.getElementById('task-title');
+        
+        form.addEventListener('submit', function(e) {
+            if (taskTitle.value.trim() === '') {
+                e.preventDefault();
+                taskTitle.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                taskTitle.focus();
+                
+                // Remove error after 3 seconds
+                setTimeout(() => {
+                    taskTitle.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+                }, 3000);
+            }
+        });
+        
+        // Add hover effects to task cards
+        const taskCards = document.querySelectorAll('[class*="hover:border-emerald-300"]');
+        taskCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
 {% endblock %}
