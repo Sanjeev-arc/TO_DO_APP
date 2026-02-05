@@ -13,7 +13,7 @@ class Task(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title=models.CharField(max_length=100)
     description=models.TextField(blank=True)
-    due_date=models.DateField()
+    due_date=models.DateField(null=True, blank=True)
     is_deleted=models.BooleanField(default=False)
     category=models.CharField(max_length=50)
     
