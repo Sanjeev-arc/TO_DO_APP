@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-ipp6tbo@#&s8nk=*3&w2oeor-f(@oqr42gnw9wt8-bineeuf^@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -135,3 +135,4 @@ ACCOUNT_SIGNUP_FIELDS=['username*','email*','password1*','password2*']
 ACCOUNT_SIGNUP_FORM_CLASS='todo.forms.CustomSignupForm'
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED=True
 ACCOUNT_LOGIN_METHODS=['email']
+STATIC_ROOT = BASE_DIR / "staticfiles"
