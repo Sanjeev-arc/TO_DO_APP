@@ -8,6 +8,5 @@ urlpatterns = [
     path("delete-task/<int:task_id>/", views.delete_task, name="delete_task"),
     path("restore-task/<int:id>/", views.restore_task, name="restore_task"),
     path("trash/", views.trash, name="trash"),
-
-
+    path("toggle-task/<int:task_id>/", views.toggle_task, name="toggle_task"),
 ]

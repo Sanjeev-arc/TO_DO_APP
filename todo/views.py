@@ -41,6 +41,9 @@ def dashboard(request):
         "today_tasks": user_tasks.filter(due_date=today),
         "upcoming_tasks": user_tasks.filter(due_date__gt=today),
         "total_tasks": user_tasks.count(),
+        "complted_tasks": user_tasks.filter(completed=True).count(),
+        "pending_tasks":user_tasks.filter(completed=False, due_date__lte=today).count(),
+        "overdue_tasks": user_tasks.filter(completed=False, due_date__lt=today).count(),
     }
 
     return render(request, "todo/dashboard.html", context)
@@ -71,3 +74,12 @@ def restore_task(request, id):
 def trash(request):
     tasks = Task.objects.filter(user=request.user, is_deleted=True)
     return render(request, "todo/trash.html", {"tasks": tasks})
+
+def toggle_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+
+    if request.method == "POST":
+        task.completed = not task.completed
+        task.save()
+
+    return redirect("dashboard")
