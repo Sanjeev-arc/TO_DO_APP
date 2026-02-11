@@ -41,7 +41,7 @@ def dashboard(request):
         "today_tasks": user_tasks.filter(due_date=today),
         "upcoming_tasks": user_tasks.filter(due_date__gt=today),
         "total_tasks": user_tasks.count(),
-        "complted_tasks": user_tasks.filter(completed=True).count(),
+        "completed_tasks": user_tasks.filter(completed=True).count(),
         "pending_tasks":user_tasks.filter(completed=False, due_date__lte=today).count(),
         "overdue_tasks": user_tasks.filter(completed=False, due_date__lt=today).count(),
     }
@@ -76,10 +76,14 @@ def trash(request):
     return render(request, "todo/trash.html", {"tasks": tasks})
 
 def toggle_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id, user=request.user)
+        print("Toggle task called")
+        if request.method == "POST":
+            task = get_object_or_404(Task, id=task_id, user=request.user)
+            print(f"Toggling task: {task.title}, Current completed status: {task.completed}")
+            task.completed = not task.completed
+            task.save()
+            print(f"New completed status: {task.completed}")
+        
+        return redirect("dashboard")
 
-    if request.method == "POST":
-        task.completed = not task.completed
-        task.save()
-
-    return redirect("dashboard")
+        return redirect("dashboard")

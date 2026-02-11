@@ -323,21 +323,30 @@
                     {% if tasks %}
                     <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                         {% for task in tasks %}
-                        <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group animate-fade-in" style="animation-delay: {{ forloop.counter0|add:4 }}00ms">
+                        <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group animate-fade-in" >
                             <div class="flex items-start">
                                 <div class="flex items-center h-6 mt-1 mr-4">
-                                    <form method="POST" action="{% url 'toggle_task' task.id %}" class="inline-block">
-                                        {% csrf_token %}
-                                        <button type="submit"
-                                                class="w-5 h-5 rounded-full border-2 border-slate-300 hover:border-emerald-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-                                        </button>
-                                    </form>
+                                    <form method="POST" action="{% url 'toggle_task' task.id %}" style="display: inline;">
+    {% csrf_token %}
+    <input type="checkbox" 
+        {% if task.completed %}checked{% endif %}
+        onchange="this.form.submit()"
+        class="w-5 h-5 rounded accent-emerald-500 cursor-pointer">
+</form>
+
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                                        <h3 class="font-semibold text-slate-800 text-lg group-hover:text-emerald-700 transition-colors">
-                                            {{ task.title }}
-                                        </h3>
+                                        <h3 class="font-semibold text-lg group-hover:text-emerald-700 transition-colors
+    {% if task.completed %}
+        line-through text-slate-400
+    {% else %}
+        text-slate-800
+    {% endif %}
+">
+    {{ task.title }}
+</h3>
+
                                         <div class="flex items-center space-x-3 mt-2 sm:mt-0">
                                             {% if task.due_date %}
                                             <span class="text-sm font-medium bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full flex items-center">
