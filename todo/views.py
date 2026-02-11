@@ -76,14 +76,9 @@ def trash(request):
     return render(request, "todo/trash.html", {"tasks": tasks})
 
 def toggle_task(request, task_id):
-        print("Toggle task called")
+        
         if request.method == "POST":
             task = get_object_or_404(Task, id=task_id, user=request.user)
-            print(f"Toggling task: {task.title}, Current completed status: {task.completed}")
             task.completed = not task.completed
-            task.save()
-            print(f"New completed status: {task.completed}")
-        
-        return redirect("dashboard")
-
+            task.save()   
         return redirect("dashboard")
